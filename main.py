@@ -6,7 +6,6 @@ import torch.nn.functional as F
 # open text file and read in data as `text`
 with open('poems_data.txt', 'r') as f:
     text = f.read()
-    text[:100]
 
 # encode the text and map each character to an integer and vice versa
 # we create two dictionaries:
@@ -14,7 +13,9 @@ with open('poems_data.txt', 'r') as f:
 # 2. char2int, which maps characters to unique integers
 chars = tuple(set(text))
 int2char = dict(enumerate(chars))
+
 char2int = {ch: ii for ii, ch in int2char.items()}
+
 # encode the text
 encoded = np.array([char2int[ch] for ch in text])
 
@@ -30,11 +31,6 @@ def one_hot_encode(arr, n_labels):
     one_hot = one_hot.reshape((*arr.shape, n_labels))
 
     return one_hot
-
-# check that the function works as expected
-test_seq = np.array([[0, 5, 1]])
-one_hot = one_hot_encode(test_seq, 8)
-print(one_hot)
 
 
 def get_batches(arr, batch_size, seq_length):
@@ -69,12 +65,9 @@ def get_batches(arr, batch_size, seq_length):
             y[:, :-1], y[:, -1] = x[:, 1:], arr[:, 0]
         yield x, y
 
+
 # check if GPU is available
 train_on_gpu = torch.cuda.is_available()
-if(train_on_gpu):
-    print('Training on GPU!')
-else:
-    print('No GPU available, training on CPU; consider making n_epochs very small.')
 
 
 class CharRNN(nn.Module):
@@ -225,6 +218,7 @@ def train(net, data, epochs=10, batch_size=10, seq_length=50, lr=0.001, clip=5, 
                       "Loss: {:.4f}...".format(loss.item()),
                       "Val Loss: {:.4f}".format(np.mean(val_losses)))
 
+
 # define and print the net
 n_hidden = 512
 n_layers = 2
@@ -232,12 +226,12 @@ net = CharRNN(chars, n_hidden, n_layers)
 print(net)
 batch_size = 128
 seq_length = 100
-n_epochs =  10# start small if you are just testing initial behavior
+n_epochs = 5
 # train the model
 train(net, encoded, epochs=n_epochs, batch_size=batch_size, seq_length=seq_length, lr=0.001, print_every=10)
 
 # change the name, for saving multiple files
-model_name = 'poem_4_epoch.net'
+model_name = 'poem_10_epoch.net'
 checkpoint = {'n_hidden': net.n_hidden,
               'n_layers': net.n_layers,
               'state_dict': net.state_dict(),
@@ -283,7 +277,7 @@ with open(model_name, 'wb') as f:
         return net.int2char[char], h
 
 
-def sample(net, size, prime='The', top_k=None):
+def sample(net, size, prime='the', top_k=None):
     if (train_on_gpu):
         net.cuda()
     else:
@@ -304,5 +298,5 @@ def sample(net, size, prime='The', top_k=None):
         chars.append(char)
     return ''.join(chars)
 
-print(sample(net, 500, prime='christmas', top_k=2))
 
+print(sample(net, 500, prime='today', top_k=2))
