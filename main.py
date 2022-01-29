@@ -3,6 +3,20 @@ import torch
 from torch import nn
 import torch.nn.functional as F
 
+
+'''
+Authors:
+Hubert Korzeniewski s19469
+Adrian Szostak s19777
+
+Input:
+poems_data.txt
+506 unique poems
+
+Output:
+A poem written by a program that has learned to write poems from more than 500 poems
+
+'''
 # open text file and read in data as `text`
 with open('poems_data.txt', 'r') as f:
     text = f.read()
@@ -226,7 +240,7 @@ net = CharRNN(chars, n_hidden, n_layers)
 print(net)
 batch_size = 128
 seq_length = 100
-n_epochs = 5
+n_epochs = 10 # the more, the better the correctness of the poems, but the slower the compilation of the program
 # train the model
 train(net, encoded, epochs=n_epochs, batch_size=batch_size, seq_length=seq_length, lr=0.001, print_every=10)
 
@@ -277,7 +291,7 @@ with open(model_name, 'wb') as f:
         return net.int2char[char], h
 
 
-def sample(net, size, prime='the', top_k=None):
+def sample(net, size, prime='that', top_k=None):
     if (train_on_gpu):
         net.cuda()
     else:
