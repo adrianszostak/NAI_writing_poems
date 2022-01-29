@@ -2,6 +2,7 @@ Building LSTM model using PyTorch to writing poems.
 
 Input:
 506 unique poems
+
 Output:
 A poem written by a program that has learned to write poems from more than 500 poems
 
