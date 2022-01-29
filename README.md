@@ -1,4 +1,10 @@
 Building LSTM model using PyTorch to writing poems.
+
+Input:
+506 unique poems
+Output:
+A poem written by a program that has learned to write poems from more than 500 poems
+
 The input data and the n_epochs parameter have the greatest impact on the quality of the row. 
 The larger the n_epochs, however, the slower the program compilation
 
